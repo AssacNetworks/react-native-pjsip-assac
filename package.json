@@ -1,0 +1,38 @@
+{
+  "author": {
+    "name": "Vadim Ruban",
+    "email": "vadim.ruban@carusto.com"
+  },
+  "bugs": {
+    "url": "https://github.com/datso/react-native-pjsip/issues"
+  },
+  "commented_scripts": {
+    "commented_postinstall": "bash libs.sh"
+  },
+  "dependencies": {
+    "events": "1.1.0"
+  },
+  "description": "PJSIP module for React Native",
+  "devDependencies": {},
+  "gitHead": "754bd49447e2611afc76fac0928408701fb8a2f0",
+  "homepage": "https://github.com/datso/react-native-pjsip",
+  "keywords": [
+    "react-component",
+    "react-native",
+    "ios",
+    "android",
+    "pjsip",
+    "sip"
+  ],
+  "name": "react-native-pjsip-assac",
+  "nativePackage": true,
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "react-native": ">=0.40.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/datso/react-native-pjsip.git"
+  },
+  "version": "2.8.3"
+}
