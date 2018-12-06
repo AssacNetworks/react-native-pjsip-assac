@@ -1,6 +1,7 @@
 package com.carusto.ReactNativePjSip;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -58,6 +59,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
 
 // Daniel
 // Daniel
@@ -240,7 +243,9 @@ public class PjSipService extends Service {
             mWorkerThread = new HandlerThread(getClass().getSimpleName(), Process.THREAD_PRIORITY_FOREGROUND);
             mWorkerThread.setPriority(Thread.MAX_PRIORITY);
             mWorkerThread.start();
+            //With this, if it was called from the push notification it will raise an exception
             mHandler = new Handler(mWorkerThread.getLooper());
+//            mHandler = new Handler(Looper.getMainLooper());
             mEmitter = new PjSipBroadcastEmiter(this);
             mAudioManager = (AudioManager) getApplicationContext().getSystemService(AUDIO_SERVICE);
             mPowerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
@@ -264,10 +269,21 @@ public class PjSipService extends Service {
         }
 
         if (intent != null) {
+
+            if (!mHandler.getLooper().getThread().isAlive())
+            {
+                mHandler = new Handler(Looper.getMainLooper());
+            }
+
             job(new Runnable() {
                 @Override
                 public void run() {
-                    handle(intent);
+                    try {
+                        handle(intent);
+                    }
+                    catch (Exception e) {
+                        Log.v("" + e, "a:a");
+                    }
                 }
             });
         }
@@ -280,7 +296,6 @@ public class PjSipService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             mWorkerThread.quitSafely();
         }
-
         try {
             if (mEndpoint != null) {
                 mEndpoint.libDestroy();
@@ -290,6 +305,13 @@ public class PjSipService extends Service {
         }
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        for (PjSipAccount account: mAccounts) {
+            handle(PjActions.createAccountRegisterIntent(999,account.getId(),false,getApplicationContext()));
+        }
     }
 
     private void job(Runnable job) {
@@ -434,7 +456,6 @@ public class PjSipService extends Service {
                     updateServiceConfiguration(newServiceConfiguration);
                 }
             }
-
             CodecInfoVector codVect = mEndpoint.codecEnum();
             JSONObject codecs = new JSONObject();
 
@@ -747,7 +768,7 @@ public class PjSipService extends Service {
                 allCallsMedias.add(currMgr.getCaptureDevMedia());
             }
 
-            startConference(mCallsAudioMedia.get(0),allCallsMedias);
+            startConference(mCallsAudioMedia.get(0), allCallsMedias);
 
             mEmitter.fireIntentHandled(intent);
         } catch (Exception e) {
@@ -755,10 +776,8 @@ public class PjSipService extends Service {
         }
     }
 
-    private void startConference(AudioMedia firstMedia, List<AudioMedia> allCallsMedias)
-    {
-        for (AudioMedia media: allCallsMedias)
-        {
+    private void startConference(AudioMedia firstMedia, List<AudioMedia> allCallsMedias) {
+        for (AudioMedia media : allCallsMedias) {
             try {
                 firstMedia.startTransmit(media);
             } catch (Exception e) {
@@ -1239,5 +1258,12 @@ public class PjSipService extends Service {
                 mGSMIdle = true;
             }
         }
+    }
+
+    private boolean appIsInForeground() {
+        ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(appProcessInfo);
+//        return (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE);
+        return (appProcessInfo.importance == IMPORTANCE_FOREGROUND);
     }
 }

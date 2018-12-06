@@ -1,4 +1,33 @@
 {
+  "_args": [
+    [
+      "react-native-pjsip-assac@2.8.5",
+      "C:\\work\\assac-application"
+    ]
+  ],
+  "_from": "react-native-pjsip-assac@2.8.5",
+  "_id": "react-native-pjsip-assac@2.8.5",
+  "_inBundle": false,
+  "_integrity": "sha512-6fRO1nJf4v8dDgX1JT/FATCbjL1JBUERzfnhtDlgpAbLvEHyBmeQJvhIcgsOBlCwzuaCEe2bGRaKm/vgv/qUqQ==",
+  "_location": "/react-native-pjsip-assac",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "react-native-pjsip-assac@2.8.5",
+    "name": "react-native-pjsip-assac",
+    "escapedName": "react-native-pjsip-assac",
+    "rawSpec": "2.8.5",
+    "saveSpec": null,
+    "fetchSpec": "2.8.5"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/react-native-pjsip-assac/-/react-native-pjsip-assac-2.8.5.tgz",
+  "_shasum": "a996181058a1a2f7c5de1e2186195146bbacc5b4",
+  "_spec": "2.8.5",
+  "_where": "C:\\work\\assac-application",
   "author": {
     "name": "Vadim Ruban",
     "email": "vadim.ruban@carusto.com"
@@ -6,12 +35,14 @@
   "bugs": {
     "url": "https://github.com/datso/react-native-pjsip/issues"
   },
+  "bundleDependencies": false,
   "commented_scripts": {
     "commented_postinstall": "bash libs.sh"
   },
   "dependencies": {
     "events": "1.1.0"
   },
+  "deprecated": false,
   "description": "PJSIP module for React Native",
   "devDependencies": {},
   "gitHead": "754bd49447e2611afc76fac0928408701fb8a2f0",
@@ -34,5 +65,5 @@
     "type": "git",
     "url": "git+https://github.com/datso/react-native-pjsip.git"
   },
-  "version": "2.8.3"
+  "version": "2.8.5"
 }
