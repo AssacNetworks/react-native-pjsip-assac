@@ -270,8 +270,7 @@ public class PjSipService extends Service {
 
         if (intent != null) {
 
-            if (!mHandler.getLooper().getThread().isAlive())
-            {
+            if (!mHandler.getLooper().getThread().isAlive()) {
                 mHandler = new Handler(Looper.getMainLooper());
             }
 
@@ -280,8 +279,7 @@ public class PjSipService extends Service {
                 public void run() {
                     try {
                         handle(intent);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         Log.v("" + e, "a:a");
                     }
                 }
@@ -309,8 +307,8 @@ public class PjSipService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        for (PjSipAccount account: mAccounts) {
-            handle(PjActions.createAccountRegisterIntent(999,account.getId(),false,getApplicationContext()));
+        for (PjSipAccount account : mAccounts) {
+            handle(PjActions.createAccountRegisterIntent(999, account.getId(), false, getApplicationContext()));
         }
     }
 
@@ -493,6 +491,24 @@ public class PjSipService extends Service {
     }
 
     private void handleAccountCreate(Intent intent) {
+
+        //If an account was already created, trying to register it instead
+        if (mAccounts.size() > 0) {
+            try{
+                PjSipAccount currAccount = mAccounts.get(0);
+                currAccount.register(true);
+                mEmitter.fireAccountCreated(intent, currAccount);
+            }
+            catch (Exception e)
+            {
+                createAccount(intent);
+            }
+        } else {
+            createAccount(intent);
+        }
+    }
+
+    private void createAccount(Intent intent) {
         try {
             AccountConfigurationDTO accountConfiguration = AccountConfigurationDTO.fromIntent(intent);
             PjSipAccount account = doAccountCreate(accountConfiguration);

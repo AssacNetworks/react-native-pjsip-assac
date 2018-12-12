@@ -186,7 +186,7 @@ export default class Endpoint extends EventEmitter {
      */
     registerAccount(account, renew = true) {
         return new Promise(function(resolve, reject) {
-            NativeModules.PjSipModule.registerAccount(account.getId(), renew, (successful, data) => {
+            NativeModules.PjSipModule.registerAccount(account._data.id, renew, (successful, data) => {
                 if (successful) {
                     resolve(data);
                 } else {
@@ -204,7 +204,7 @@ export default class Endpoint extends EventEmitter {
      */
     deleteAccount(account) {
         return new Promise(function(resolve, reject) {
-            NativeModules.PjSipModule.deleteAccount(account.getId(), (successful, data) => {
+            NativeModules.PjSipModule.deleteAccount(account._data.id, (successful, data) => {
                 if (successful) {
                     resolve(data);
                 } else {
@@ -230,7 +230,7 @@ export default class Endpoint extends EventEmitter {
         destination = this._normalize(account, destination);
 
         return new Promise(function(resolve, reject) {
-            NativeModules.PjSipModule.makeCall(account.getId(), destination, callSettings, msgData, (successful, data) => {
+            NativeModules.PjSipModule.makeCall(account._data.id, destination, callSettings, msgData, (successful, data) => {
                 if (successful) {
                     resolve(new Call(data));
                 } else {
