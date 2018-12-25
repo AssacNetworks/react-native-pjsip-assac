@@ -106,7 +106,7 @@ public class PjSipService extends Service {
 
     private PowerManager mPowerManager;
 
-    private PowerManager.WakeLock mIncallWakeLock;
+//    private PowerManager.WakeLock mIncallWakeLock;
 
     private TelephonyManager mTelephonyManager;
 
@@ -886,6 +886,7 @@ public class PjSipService extends Service {
 
             // -----
             PjSipCall call = findCall(callId);
+            Log.w(TAG, "unholding call tomer");
             call.unhold();
 
             // Automatically put other calls on hold.
@@ -1162,12 +1163,12 @@ public class PjSipService extends Service {
                 @Override
                 public void run() {
                     // Acquire wake lock
-                    if (mIncallWakeLock == null) {
-                        mIncallWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "incall");
-                    }
-                    if (!mIncallWakeLock.isHeld()) {
-                        mIncallWakeLock.acquire();
-                    }
+//                    if (mIncallWakeLock == null) {
+//                        mIncallWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "incall");
+//                    }
+//                    if (!mIncallWakeLock.isHeld()) {
+//                        mIncallWakeLock.acquire();
+//                    }
 
                     // Ensure that ringing sound is stopped
                     if (callState != pjsip_inv_state.PJSIP_INV_STATE_INCOMING && !mUseSpeaker && mAudioManager.isSpeakerphoneOn()) {
@@ -1196,11 +1197,11 @@ public class PjSipService extends Service {
             @Override
             public void run() {
                 // Release wake lock
-                if (mCalls.size() == 1) {
-                    if (mIncallWakeLock != null && mIncallWakeLock.isHeld()) {
-                        mIncallWakeLock.release();
-                    }
-                }
+//                if (mCalls.size() == 1) {
+//                    if (mIncallWakeLock != null && mIncallWakeLock.isHeld()) {
+//                        mIncallWakeLock.release();
+//                    }
+//                }
 
                 // Release wifi lock
                 if (mCalls.size() == 1) {
@@ -1233,6 +1234,7 @@ public class PjSipService extends Service {
             }
 
             try {
+                Log.w(TAG, "putting call on hold tomer");
                 call.hold();
             } catch (Exception e) {
                 Log.w(TAG, "Failed to put call on hold", e);

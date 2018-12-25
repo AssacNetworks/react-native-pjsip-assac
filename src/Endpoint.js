@@ -49,16 +49,38 @@ export default class Endpoint extends EventEmitter {
     constructor() {
         super();
 
-        // Subscribe to Accounts events
-        DeviceEventEmitter.addListener('pjSipRegistrationChanged', this._onRegistrationChanged.bind(this));
+        this.listeners = [
+                // Subscribe to Accounts events
+            DeviceEventEmitter.addListener('pjSipRegistrationChanged', this._onRegistrationChanged.bind(this)),
+
+            // Subscribe to Calls events
+            DeviceEventEmitter.addListener('pjSipCallReceived', this._onCallReceived.bind(this)),
+            DeviceEventEmitter.addListener('pjSipCallChanged', this._onCallChanged.bind(this)),
+            DeviceEventEmitter.addListener('pjSipCallTerminated', this._onCallTerminated.bind(this)),
+            DeviceEventEmitter.addListener('pjSipCallScreenLocked', this._onCallScreenLocked.bind(this)),
+            DeviceEventEmitter.addListener('pjSipMessageReceived', this._onMessageReceived.bind(this)),
+            DeviceEventEmitter.addListener('pjSipConnectivityChanged', this._onConnectivityChanged.bind(this))
+        ];
+        
+    }
+
+
+    restartListeners()
+    {
+        this.removeAllListeners();
+        
+        this.listeners = [
+            // Subscribe to Accounts events
+        DeviceEventEmitter.addListener('pjSipRegistrationChanged', this._onRegistrationChanged.bind(this)),
 
         // Subscribe to Calls events
-        DeviceEventEmitter.addListener('pjSipCallReceived', this._onCallReceived.bind(this));
-        DeviceEventEmitter.addListener('pjSipCallChanged', this._onCallChanged.bind(this));
-        DeviceEventEmitter.addListener('pjSipCallTerminated', this._onCallTerminated.bind(this));
-        DeviceEventEmitter.addListener('pjSipCallScreenLocked', this._onCallScreenLocked.bind(this));
-        DeviceEventEmitter.addListener('pjSipMessageReceived', this._onMessageReceived.bind(this));
-        DeviceEventEmitter.addListener('pjSipConnectivityChanged', this._onConnectivityChanged.bind(this));
+        DeviceEventEmitter.addListener('pjSipCallReceived', this._onCallReceived.bind(this)),
+        DeviceEventEmitter.addListener('pjSipCallChanged', this._onCallChanged.bind(this)),
+        DeviceEventEmitter.addListener('pjSipCallTerminated', this._onCallTerminated.bind(this)),
+        DeviceEventEmitter.addListener('pjSipCallScreenLocked', this._onCallScreenLocked.bind(this)),
+        DeviceEventEmitter.addListener('pjSipMessageReceived', this._onMessageReceived.bind(this)),
+        DeviceEventEmitter.addListener('pjSipConnectivityChanged', this._onConnectivityChanged.bind(this))
+        ];
     }
 
     /**
@@ -186,7 +208,7 @@ export default class Endpoint extends EventEmitter {
      */
     registerAccount(account, renew = true) {
         return new Promise(function(resolve, reject) {
-            NativeModules.PjSipModule.registerAccount(account._data.id, renew, (successful, data) => {
+            NativeModules.PjSipModule.registerAccount(account.getId(), renew, (successful, data) => {
                 if (successful) {
                     resolve(data);
                 } else {
@@ -204,7 +226,7 @@ export default class Endpoint extends EventEmitter {
      */
     deleteAccount(account) {
         return new Promise(function(resolve, reject) {
-            NativeModules.PjSipModule.deleteAccount(account._data.id, (successful, data) => {
+            NativeModules.PjSipModule.deleteAccount(account.getId(), (successful, data) => {
                 if (successful) {
                     resolve(data);
                 } else {
@@ -230,7 +252,7 @@ export default class Endpoint extends EventEmitter {
         destination = this._normalize(account, destination);
 
         return new Promise(function(resolve, reject) {
-            NativeModules.PjSipModule.makeCall(account._data.id, destination, callSettings, msgData, (successful, data) => {
+            NativeModules.PjSipModule.makeCall(account.getId(), destination, callSettings, msgData, (successful, data) => {
                 if (successful) {
                     resolve(new Call(data));
                 } else {
@@ -293,6 +315,13 @@ export default class Endpoint extends EventEmitter {
                 }
             });
         });
+    }
+
+    removeAllListeners()
+    {
+        for (var i = 0; i < this.listeners.length; i++) {
+            this.listeners[i].remove();
+        }
     }
 
     /**

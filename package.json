@@ -1,10 +1,4 @@
 {
-  "_args": [
-    [
-      "react-native-pjsip-assac@2.8.5",
-      "C:\\work\\assac-application"
-    ]
-  ],
   "_from": "react-native-pjsip-assac@2.8.5",
   "_id": "react-native-pjsip-assac@2.8.5",
   "_inBundle": false,
@@ -22,11 +16,12 @@
     "fetchSpec": "2.8.5"
   },
   "_requiredBy": [
+    "#USER",
     "/"
   ],
   "_resolved": "https://registry.npmjs.org/react-native-pjsip-assac/-/react-native-pjsip-assac-2.8.5.tgz",
-  "_shasum": "a996181058a1a2f7c5de1e2186195146bbacc5b4",
-  "_spec": "2.8.5",
+  "_shasum": "61055cacda4992a792d5141e9b28071956407a7a",
+  "_spec": "react-native-pjsip-assac@2.8.5",
   "_where": "C:\\work\\assac-application",
   "author": {
     "name": "Vadim Ruban",
@@ -65,5 +60,5 @@
     "type": "git",
     "url": "git+https://github.com/datso/react-native-pjsip.git"
   },
-  "version": "2.8.6"
+  "version": "2.8.5"
 }

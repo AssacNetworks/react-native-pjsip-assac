@@ -69,8 +69,12 @@ public class PjSipCall extends Call {
         getService().emmitCallUpdated(this);
 
         // Send reinvite to server for release from hold
-        CallOpParam prm = new CallOpParam(true);
-        prm.getOpt().setFlag(1);
+        CallOpParam prm = new CallOpParam();
+
+        CallSetting callSetting = prm.getOpt();
+        callSetting.setAudioCount(1);
+
+        prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
 
         reinvite(prm);
     }
