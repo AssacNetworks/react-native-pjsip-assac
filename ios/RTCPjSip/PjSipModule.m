@@ -24,6 +24,10 @@
     return self;
 }
 
++ (BOOL)requiresMainQueueSetup {
+    return YES;
+}
+
 RCT_EXPORT_METHOD(start: (NSDictionary *) config callback: (RCTResponseSenderBlock) callback) {
     [PjSipEndpoint instance].bridge = self.bridge;
 
