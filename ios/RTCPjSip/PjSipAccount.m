@@ -117,6 +117,14 @@
             }
         }
         
+        // Assac - start
+        cfg.use_timer = PJSUA_SIP_TIMER_INACTIVE;
+        cfg.use_srtp = PJMEDIA_SRTP_MANDATORY;
+        cfg.srtp_secure_signaling = 0;
+        cfg.vid_in_auto_show = PJ_FALSE;
+        cfg.vid_out_auto_transmit = PJ_FALSE;
+        // Assac - end
+        
         pjsua_acc_id account_id;
 
         status = pjsua_acc_add(&cfg, PJ_TRUE, &account_id);

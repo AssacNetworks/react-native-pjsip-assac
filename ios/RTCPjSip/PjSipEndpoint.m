@@ -189,6 +189,7 @@
 -(PjSipCall *) makeCall:(PjSipAccount *) account destination:(NSString *)destination callSettings: (NSDictionary *)callSettingsDict msgData: (NSDictionary *)msgDataDict {
     pjsua_call_setting callSettings;
     [PjSipUtil fillCallSettings:&callSettings dict:callSettingsDict];
+    callSettings.vid_cnt = 0;// Assac - added
 
     pjsua_msg_data msgData;
     [PjSipUtil fillMsgData:&msgData dict:msgDataDict];
@@ -271,7 +272,9 @@
      * we can simply ignore them.
     */
     for (int i = pjsua_vid_dev_count() - 1; i >= 0; i--) {
-        pjsua_vid_dev_set_setting(i, PJMEDIA_VID_DEV_CAP_ORIENTATION, &orient, PJ_TRUE);
+        // Assac - start
+        //pjsua_vid_dev_set_setting(i, PJMEDIA_VID_DEV_CAP_ORIENTATION, &orient, PJ_TRUE);
+        // Assac - end
     }
 }
 
