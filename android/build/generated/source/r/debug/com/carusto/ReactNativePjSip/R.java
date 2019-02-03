@@ -645,6 +645,7 @@ public final class R {
     public static final class raw {
         public static int ring = 0x7f140001;
         public static int ringback = 0x7f140002;
+        public static int whoosh = 0x7f140003;
     }
     public static final class string {
         public static int abc_action_bar_home_description = 0x7f150001;
