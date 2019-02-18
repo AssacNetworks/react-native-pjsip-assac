@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -194,8 +195,8 @@ public class PjSipService extends Service {
             // End Shabtai
 
             epConfig.getMedConfig().setHasIoqueue(true);
-            //epConfig.getMedConfig().setClockRate(8000);
-            epConfig.getMedConfig().setClockRate(16000);
+            epConfig.getMedConfig().setClockRate(8000);
+            //epConfig.getMedConfig().setClockRate(16000);
             epConfig.getMedConfig().setQuality(4);
             //epConfig.getMedConfig().setEcOptions(1);
             epConfig.getMedConfig().setEcOptions(3);
@@ -297,6 +298,7 @@ public class PjSipService extends Service {
         try {
             if (mEndpoint != null) {
                 mEndpoint.libDestroy();
+                mEndpoint.delete();
             }
         } catch (Exception e) {
             Log.w(TAG, "Failed to destroy PjSip library", e);
@@ -1179,7 +1181,8 @@ public class PjSipService extends Service {
                     mWifiLock.acquire();
 
                     if (callState == pjsip_inv_state.PJSIP_INV_STATE_EARLY || callState == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
-                        mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+                        mAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+                        mAudioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE);
                     }
                 }
             });
