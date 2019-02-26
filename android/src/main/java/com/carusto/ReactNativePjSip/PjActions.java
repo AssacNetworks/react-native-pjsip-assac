@@ -33,6 +33,7 @@ public class PjActions {
     public static final String ACTION_DECLINE_CALL = "call_decline";
     public static final String ACTION_ANSWER_CALL = "call_answer";
     public static final String ACTION_HOLD_CALL = "call_hold";
+    public static final String HANDLE_IP_CHANGE = "handle_ip_change";
     public static final String ACTION_UNHOLD_CALL = "call_unhold";
     public static final String ACTION_MUTE_CALL = "call_mute";
     public static final String ACTION_UNMUTE_CALL = "call_unmute";
@@ -164,6 +165,13 @@ public class PjActions {
         intent.putExtra("callback_id", callbackId);
         intent.putExtra("call_id", callId);
 
+        return intent;
+    }
+
+    public static Intent createHandleIpChange(int callbackId, Context context) {
+        Intent intent = new Intent(context, PjSipService.class);
+        intent.setAction(PjActions.HANDLE_IP_CHANGE);
+        intent.putExtra("callback_id", callbackId);
         return intent;
     }
 

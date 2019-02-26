@@ -81,7 +81,12 @@ public class Call {
     return pjsua2JNI.Call_hasMedia(swigCPtr, this);
   }
 
-  public Media getMedia(long med_idx) {
+  public synchronized Media getMedia(long med_idx) {
+    try {
+      wait(100);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     long cPtr = pjsua2JNI.Call_getMedia(swigCPtr, this, med_idx);
     return (cPtr == 0) ? null : new Media(cPtr, false);
   }

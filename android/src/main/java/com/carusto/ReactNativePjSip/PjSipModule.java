@@ -111,6 +111,13 @@ public class PjSipModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void handleIpChange(Callback callback) {
+        int callbackId = receiver.register(callback);
+        Intent intent = PjActions.createHandleIpChange(callbackId, getReactApplicationContext());
+        getReactApplicationContext().startService(intent);
+    }
+
+    @ReactMethod
     public void unholdCall(int callId, Callback callback) {
         int callbackId = receiver.register(callback);
         Intent intent = PjActions.createUnholdCallIntent(callbackId, callId, getReactApplicationContext());
