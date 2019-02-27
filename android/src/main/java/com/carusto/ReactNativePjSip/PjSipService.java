@@ -195,8 +195,8 @@ public class PjSipService extends Service {
             // End Shabtai
 
             epConfig.getMedConfig().setHasIoqueue(true);
-            //epConfig.getMedConfig().setClockRate(8000);
-            epConfig.getMedConfig().setClockRate(16000);
+            epConfig.getMedConfig().setClockRate(8000);
+//            epConfig.getMedConfig().setClockRate(16000);
             epConfig.getMedConfig().setQuality(4);
             //epConfig.getMedConfig().setEcOptions(1);
             epConfig.getMedConfig().setEcOptions(3);
