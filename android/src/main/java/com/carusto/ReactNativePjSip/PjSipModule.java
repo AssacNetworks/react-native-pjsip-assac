@@ -118,6 +118,13 @@ public class PjSipModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void hangupAllCalls(Callback callback) {
+        int callbackId = receiver.register(callback);
+        Intent intent = PjActions.createHangupAllCallsIntent(callbackId, getReactApplicationContext());
+        getReactApplicationContext().startService(intent);
+    }
+
+    @ReactMethod
     public void unholdCall(int callId, Callback callback) {
         int callbackId = receiver.register(callback);
         Intent intent = PjActions.createUnholdCallIntent(callbackId, callId, getReactApplicationContext());

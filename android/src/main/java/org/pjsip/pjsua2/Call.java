@@ -60,8 +60,17 @@ public class Call {
     pjsua2JNI.Call_director_connect(this, swigCPtr, swigCMemOwn, true);
   }
 
-  public CallInfo getInfo() throws java.lang.Exception {
-    return new CallInfo(pjsua2JNI.Call_getInfo(swigCPtr, this), true);
+  public synchronized CallInfo getInfo() throws java.lang.Exception {
+    CallInfo info = null;
+    do {
+      try {
+        wait(100);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      info = new CallInfo(pjsua2JNI.Call_getInfo(swigCPtr, this), true);
+    } while (info == null);
+    return info;
   }
 
   public boolean isActive() {
@@ -82,13 +91,17 @@ public class Call {
   }
 
   public synchronized Media getMedia(long med_idx) {
-    try {
-      wait(100);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    long cPtr = pjsua2JNI.Call_getMedia(swigCPtr, this, med_idx);
-    return (cPtr == 0) ? null : new Media(cPtr, false);
+    Media media = null;
+    do {
+      try {
+        wait(100);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      long cPtr = pjsua2JNI.Call_getMedia(swigCPtr, this, med_idx);
+      media = (cPtr == 0) ? null : new Media(cPtr, false);
+    } while (media == null);
+    return media;
   }
 
   public pjsip_dialog_cap_status remoteHasCap(int htype, String hname, String token) {
