@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -39,6 +38,7 @@ import org.pjsip.pjsua2.CodecInfo;
 import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
+import org.pjsip.pjsua2.IpChangeParam;
 import org.pjsip.pjsua2.Media;
 import org.pjsip.pjsua2.OnCallStateParam;
 import org.pjsip.pjsua2.OnRegStateParam;
@@ -195,8 +195,8 @@ public class PjSipService extends Service {
             // End Shabtai
 
             epConfig.getMedConfig().setHasIoqueue(true);
-            //epConfig.getMedConfig().setClockRate(8000);
-            epConfig.getMedConfig().setClockRate(16000);
+            epConfig.getMedConfig().setClockRate(8000);
+//            epConfig.getMedConfig().setClockRate(16000);
             epConfig.getMedConfig().setQuality(4);
             //epConfig.getMedConfig().setEcOptions(1);
             epConfig.getMedConfig().setEcOptions(3);
@@ -407,6 +407,9 @@ public class PjSipService extends Service {
             case PjActions.ACTION_HOLD_CALL:
                 handleCallSetOnHold(intent);
                 break;
+            case PjActions.HANDLE_IP_CHANGE:
+                handleIpChange();
+                break;
             case PjActions.ACTION_UNHOLD_CALL:
                 handleCallReleaseFromHold(intent);
                 break;
@@ -496,13 +499,11 @@ public class PjSipService extends Service {
 
         //If an account was already created, trying to register it instead
         if (mAccounts.size() > 0) {
-            try{
+            try {
                 PjSipAccount currAccount = mAccounts.get(0);
                 currAccount.register(true);
                 mEmitter.fireAccountCreated(intent, currAccount);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 createAccount(intent);
             }
         } else {
@@ -879,6 +880,18 @@ public class PjSipService extends Service {
             mEmitter.fireIntentHandled(intent);
         } catch (Exception e) {
             mEmitter.fireIntentHandled(intent, e);
+        }
+    }
+
+    private void handleIpChange() {
+        try {
+            final IpChangeParam ipChangeParam = new IpChangeParam();
+            ipChangeParam.setRestartListener(true);
+            ipChangeParam.setRestartLisDelay(5000);
+            mEndpoint.handleIpChange(ipChangeParam);
+            ipChangeParam.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
