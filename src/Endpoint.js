@@ -391,6 +391,20 @@ export default class Endpoint extends EventEmitter {
         });
     }
 
+    hangupAllCalls() {
+        return new Promise((resolve, reject) => {
+            NativeModules.PjSipModule.hangupAllCalls((successful, data) => {
+                if (successful) {
+                    console.log("success")
+                    resolve(data);
+                } else {
+                    console.log("failed")
+                    reject(data);
+                }
+            });
+        });
+    }
+
     /**
      * @param call {Call} Call instance
      * @returns {Promise}

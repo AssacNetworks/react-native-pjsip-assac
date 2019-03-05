@@ -195,8 +195,8 @@ public class PjSipService extends Service {
             // End Shabtai
 
             epConfig.getMedConfig().setHasIoqueue(true);
-            epConfig.getMedConfig().setClockRate(8000);
-//            epConfig.getMedConfig().setClockRate(16000);
+//            epConfig.getMedConfig().setClockRate(8000);
+            epConfig.getMedConfig().setClockRate(16000);
             epConfig.getMedConfig().setQuality(4);
             //epConfig.getMedConfig().setEcOptions(1);
             epConfig.getMedConfig().setEcOptions(3);
@@ -409,6 +409,9 @@ public class PjSipService extends Service {
                 break;
             case PjActions.HANDLE_IP_CHANGE:
                 handleIpChange();
+                break;
+            case PjActions.HANGUP_ALL_CALLS:
+                hangupAllCalls();
                 break;
             case PjActions.ACTION_UNHOLD_CALL:
                 handleCallReleaseFromHold(intent);
@@ -761,7 +764,7 @@ public class PjSipService extends Service {
         }
     }
 
-    private void handleCallConference(Intent intent) {
+    private synchronized void handleCallConference(Intent intent) {
         try {
             int callId = intent.getIntExtra("call_id", -1);
             PjSipCall call = findCall(callId);
@@ -776,7 +779,6 @@ public class PjSipService extends Service {
             for (int i = mCalls.size() - 1; i >= 0; i--) {
                 getAudioMedias(mCalls.get(i), mCallsAudioMedia, mCallsMgr);
             }
-
             List<AudioMedia> allCallsMedias = new ArrayList<>();
 
             for (int j = 0; j < mCallsAudioMedia.size(); j++) {
@@ -787,7 +789,7 @@ public class PjSipService extends Service {
                 allCallsMedias.add(currMgr.getCaptureDevMedia());
             }
 
-            startConference(mCallsAudioMedia.get(0), allCallsMedias);
+            startConference(mCallsAudioMedia, allCallsMedias);
 
             mEmitter.fireIntentHandled(intent);
         } catch (Exception e) {
@@ -795,17 +797,32 @@ public class PjSipService extends Service {
         }
     }
 
-    private void startConference(AudioMedia firstMedia, List<AudioMedia> allCallsMedias) {
-        for (AudioMedia media : allCallsMedias) {
-            try {
-                firstMedia.startTransmit(media);
-            } catch (Exception e) {
-                e.printStackTrace();
+    private void startConference(List<AudioMedia> mCallsAudioMedia, List<AudioMedia> allCallsMedias) {
+
+        for (int i = 0; i < mCallsAudioMedia.size(); i++) {
+            for (int j = 0; j < allCallsMedias.size(); j++) {
+                if (!mCallsAudioMedia.get(i).equals(allCallsMedias.get(j))) {
+                    try {
+                        mCallsAudioMedia.get(i).startTransmit(allCallsMedias.get(j));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
+
+//        for (AudioMedia media : allCallsMedias) {
+//            try {
+//                if (!firstMedia.equals(media)) {
+//                    firstMedia.startTransmit(media);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
-    private void getAudioMedias(PjSipCall currCall, List<AudioMedia> mCallsAudioMedia, List<AudDevManager> mCallsMgr) throws Exception {
+    private synchronized void getAudioMedias(PjSipCall currCall, List<AudioMedia> mCallsAudioMedia, List<AudDevManager> mCallsMgr) throws Exception {
         for (int i = 0; i < currCall.getInfo().getMedia().size(); i++) {
             currCall.unhold();
             Media media = currCall.getMedia(i);
@@ -813,6 +830,7 @@ public class PjSipService extends Service {
             if (mediaInfo.getType() == pjmedia_type.PJMEDIA_TYPE_AUDIO
                     && media != null
                     && mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE) {
+
                 AudioMedia audioMedia = AudioMedia.typecastFromMedia(media);
                 mCallsAudioMedia.add(audioMedia);
                 mCallsMgr.add(currCall.getService().mAccounts.get(0).getService().getAudDevManager());
@@ -890,6 +908,14 @@ public class PjSipService extends Service {
             ipChangeParam.setRestartLisDelay(5000);
             mEndpoint.handleIpChange(ipChangeParam);
             ipChangeParam.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void hangupAllCalls() {
+        try {
+            mEndpoint.hangupAllCalls();
         } catch (Exception e) {
             e.printStackTrace();
         }
