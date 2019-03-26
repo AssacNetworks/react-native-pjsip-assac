@@ -3,11 +3,15 @@ package com.carusto.ReactNativePjSip;
 import android.content.Intent;
 import android.os.Build;
 
-import com.facebook.react.bridge.*;
+import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
 public class PjSipModule extends ReactContextBaseJavaModule {
-
     private static PjSipBroadcastReceiver receiver;
+    public static PjSipModule instace;
 
     public PjSipModule(ReactApplicationContext context) {
         super(context);
@@ -19,6 +23,7 @@ public class PjSipModule extends ReactContextBaseJavaModule {
         } else {
             receiver.setContext(context);
         }
+        instace = this;
     }
 
     @Override
@@ -33,9 +38,7 @@ public class PjSipModule extends ReactContextBaseJavaModule {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getReactApplicationContext().startForegroundService(intent);
-        }
-        else
-        {
+        } else {
             getReactApplicationContext().startService(intent);
         }
     }
@@ -69,7 +72,7 @@ public class PjSipModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void makeCall(int accountId, String destination, ReadableMap callSettings, ReadableMap msgData,  Callback callback) {
+    public void makeCall(int accountId, String destination, ReadableMap callSettings, ReadableMap msgData, Callback callback) {
         int callbackId = receiver.register(callback);
         Intent intent = PjActions.createMakeCallIntent(callbackId, accountId, destination, callSettings, msgData, getReactApplicationContext());
         getReactApplicationContext().startService(intent);
