@@ -196,7 +196,7 @@ public class PjSipService extends Service {
 
             epConfig.getMedConfig().setHasIoqueue(true);
 //            epConfig.getMedConfig().setClockRate(8000);
-            epConfig.getMedConfig().setClockRate(16000);
+            epConfig.getMedConfig().setClockRate(getSampleRate());
             epConfig.getMedConfig().setQuality(4);
             //epConfig.getMedConfig().setEcOptions(1);
             epConfig.getMedConfig().setEcOptions(3);
@@ -231,6 +231,13 @@ public class PjSipService extends Service {
         } catch (Exception e) {
             Log.e(TAG, "Error while starting PJSIP", e);
         }
+    }
+
+    private long getSampleRate() {
+        Long defaultRate = 16000L;
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        String sampleRateString = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
+        return (sampleRateString == null ? defaultRate : Integer.parseInt(sampleRateString));
     }
 
 
@@ -292,6 +299,7 @@ public class PjSipService extends Service {
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(mPhoneStateChangedReceiver);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             mWorkerThread.quitSafely();
         }
