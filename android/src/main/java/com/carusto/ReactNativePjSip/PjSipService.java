@@ -512,15 +512,42 @@ public class PjSipService extends Service {
         if (mAccounts.size() > 0) {
             try {
                 PjSipAccount currAccount = mAccounts.get(0);
-                currAccount.register(true);
+                if (currAccount.isValid()) {
+                    currAccount.register(true);
+                } else {
+                    currAccount.delete();
+                    mAccounts.remove(0);
+                    createAccount(intent);
+                }
                 mEmitter.fireAccountCreated(intent, currAccount);
             } catch (Exception e) {
-                createAccount(intent);
+                Log.d("Harel", "register account failed " + mAccounts.get(0).toJson());
+                if (mAccounts.get(0) != null) {
+                    mAccounts.get(0).delete();
+                    mAccounts.remove(0);
+                    createAccount(intent);
+                }
             }
         } else {
             createAccount(intent);
         }
     }
+
+//    private void handleAccountCreate(Intent intent) {
+//
+//        //If an account was already created, trying to register it instead
+//        if (mAccounts.size() > 0) {
+//            try {
+//                PjSipAccount currAccount = mAccounts.get(0);
+//                currAccount.register(true);
+//                mEmitter.fireAccountCreated(intent, currAccount);
+//            } catch (Exception e) {
+//                createAccount(intent);
+//            }
+//        } else {
+//            createAccount(intent);
+//        }
+//    }
 
     private void createAccount(Intent intent) {
         try {

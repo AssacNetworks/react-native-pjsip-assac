@@ -60,17 +60,8 @@ public class Call {
     pjsua2JNI.Call_director_connect(this, swigCPtr, swigCMemOwn, true);
   }
 
-  public synchronized CallInfo getInfo() throws java.lang.Exception {
-    CallInfo info = null;
-    do {
-      try {
-        wait(100);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      info = new CallInfo(pjsua2JNI.Call_getInfo(swigCPtr, this), true);
-    } while (info == null);
-    return info;
+  public CallInfo getInfo() throws java.lang.Exception {
+    return new CallInfo(pjsua2JNI.Call_getInfo(swigCPtr, this), true);
   }
 
   public boolean isActive() {
@@ -90,18 +81,9 @@ public class Call {
     return pjsua2JNI.Call_hasMedia(swigCPtr, this);
   }
 
-  public synchronized Media getMedia(long med_idx) {
-    Media media = null;
-    do {
-      try {
-        wait(100);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      long cPtr = pjsua2JNI.Call_getMedia(swigCPtr, this, med_idx);
-      media = (cPtr == 0) ? null : new Media(cPtr, false);
-    } while (media == null);
-    return media;
+  public Media getMedia(long med_idx) {
+    long cPtr = pjsua2JNI.Call_getMedia(swigCPtr, this, med_idx);
+    return (cPtr == 0) ? null : new Media(cPtr, false);
   }
 
   public pjsip_dialog_cap_status remoteHasCap(int htype, String hname, String token) {
@@ -159,10 +141,6 @@ public class Call {
 
   public void dialDtmf(String digits) throws java.lang.Exception {
     pjsua2JNI.Call_dialDtmf(swigCPtr, this, digits);
-  }
-
-  public void sendDtmf(CallSendDtmfParam param) throws java.lang.Exception {
-    pjsua2JNI.Call_sendDtmf(swigCPtr, this, CallSendDtmfParam.getCPtr(param), param);
   }
 
   public void sendInstantMessage(SendInstantMessageParam prm) throws java.lang.Exception {
@@ -259,10 +237,6 @@ public class Call {
 
   public void onCallRxOffer(OnCallRxOfferParam prm) {
     if (getClass() == Call.class) pjsua2JNI.Call_onCallRxOffer(swigCPtr, this, OnCallRxOfferParam.getCPtr(prm), prm); else pjsua2JNI.Call_onCallRxOfferSwigExplicitCall(swigCPtr, this, OnCallRxOfferParam.getCPtr(prm), prm);
-  }
-
-  public void onCallRxReinvite(OnCallRxReinviteParam prm) {
-    if (getClass() == Call.class) pjsua2JNI.Call_onCallRxReinvite(swigCPtr, this, OnCallRxReinviteParam.getCPtr(prm), prm); else pjsua2JNI.Call_onCallRxReinviteSwigExplicitCall(swigCPtr, this, OnCallRxReinviteParam.getCPtr(prm), prm);
   }
 
   public void onCallTxOffer(OnCallTxOfferParam prm) {
