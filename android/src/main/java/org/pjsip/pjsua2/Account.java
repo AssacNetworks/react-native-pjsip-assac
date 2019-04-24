@@ -63,10 +63,6 @@ public class Account {
     pjsua2JNI.Account_create__SWIG_1(swigCPtr, this, AccountConfig.getCPtr(cfg), cfg);
   }
 
-  public void shutdown() {
-    pjsua2JNI.Account_shutdown(swigCPtr, this);
-  }
-
   public void modify(AccountConfig cfg) throws java.lang.Exception {
     pjsua2JNI.Account_modify(swigCPtr, this, AccountConfig.getCPtr(cfg), cfg);
   }
@@ -124,6 +120,14 @@ public class Account {
   public Buddy findBuddy(String uri) throws java.lang.Exception {
     long cPtr = pjsua2JNI.Account_findBuddy__SWIG_1(swigCPtr, this, uri);
     return (cPtr == 0) ? null : new Buddy(cPtr, false);
+  }
+
+  public void addBuddy(Buddy buddy) {
+    pjsua2JNI.Account_addBuddy(swigCPtr, this, Buddy.getCPtr(buddy), buddy);
+  }
+
+  public void removeBuddy(Buddy buddy) {
+    pjsua2JNI.Account_removeBuddy(swigCPtr, this, Buddy.getCPtr(buddy), buddy);
   }
 
   public void onIncomingCall(OnIncomingCallParam prm) {
